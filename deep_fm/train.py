@@ -15,7 +15,7 @@ from sklearn.metrics import auc, roc_auc_score, roc_curve
 from torch import nn
 from tqdm import tqdm
 from dataset import get_dataloader
-from dcn_model import DeepCross
+from deep_fm_model import DeepFM
 from torch.optim import Adam
 import pandas as pd
 
@@ -34,7 +34,7 @@ history = pd.DataFrame(columns=['epoch', 'loss', metric_name, 'val_loss', ('val_
 
 
 def train(epoch):
-    model = DeepCross()
+    model = DeepFM()
     optimizer = Adam(model.parameters(),lr=0.001)
     loss_function = nn.BCELoss()
     loss_list = []
@@ -54,7 +54,7 @@ def train(epoch):
             pass
         loss.backward()
 
-    torch.save(model.state_dict(), 'models/deep_cross.pkl')
+    torch.save(model.state_dict(), 'models/deep_fm.pkl')
     torch.save(model.state_dict(), 'models/optimizer.pkl')
     # print('epoch:{} loss:{:.4f}'.format(epoch, np.mean(loss_list)))
     history.loc[epoch, ['epoch', 'loss', metric_name]] = epoch, np.mean(loss_list), np.mean(
@@ -62,8 +62,8 @@ def train(epoch):
 
 
 def eval(epoch):
-    model = DeepCross()
-    model.load_state_dict(torch.load('models/deep_cross.pkl'),strict=False)
+    model = DeepFM()
+    model.load_state_dict(torch.load('models/deep_fm.pkl'),strict=False)
     val_loader = get_dataloader(mode='val')
     loss_function = nn.BCELoss()
     val_loss = []
@@ -95,7 +95,7 @@ def plot_metric(metric):
 
 
 if __name__ == '__main__':
-    for i in range(10):
+    for i in range(5):
         train(i)
         eval(i)
     plot_metric('loss')

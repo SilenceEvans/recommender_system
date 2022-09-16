@@ -26,11 +26,13 @@ class Cross(nn.Module):
             [nn.Parameter(nn.init.zeros_(torch.empty(cross_dim,1))) for _ in range(num_layers)])
 
     def forward(self, x):
-        x_0 = x.unsqueeze(2)
+        x_0 = x.unsqueeze(2) # [batch_size,feature_nums,1]
         x_l = x_0
         for i in range(self.num_layers):
-            tmp = x_0.matmul(x_l.transpose(2, 1)).to(torch.float32)
+            # 这一步其实就是每个特征与其他特征（包括自己）做交叉的过程
+            tmp = x_0.matmul(x_l.transpose(2, 1)).to(torch.float32) # tmp:[batch_size,feature_num,feature_num]
             tmp = self.linear[i](tmp)
+            # 这一步类似于跳跃连接
             x_l = tmp + self.bias[i] + x_l
 
         return x_l.squeeze(2)

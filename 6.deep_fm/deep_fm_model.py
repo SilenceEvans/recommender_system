@@ -25,7 +25,7 @@ class FM(nn.Module):
     def forward(self, inputs):
         inputs = inputs.float()
         first_order = self.w0 + torch.mm(inputs, self.w1)
-        second_order = torch.sum(
+        second_order = 1/2 * torch.sum(
             torch.pow(torch.mm(inputs, self.w2), 2) - torch.mm(torch.pow(inputs, 2), torch.pow(self.w2, 2)),
             dim=-1,keepdim=True)
         return first_order + second_order

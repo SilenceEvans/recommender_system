@@ -53,6 +53,7 @@ def train(epoch):
             # print('二元分类模型样本中标签全为1或者0时会报错，样本不均衡导致\n')
             pass
         loss.backward()
+        optimizer.step()
 
     torch.save(model.state_dict(), 'models/afm.pkl')
     torch.save(model.state_dict(), 'models/optimizer.pkl')
@@ -87,7 +88,7 @@ def plot_metric(metric):
     epochs = range(1, len(train_metrics) + 1)
     plt.plot(epochs, train_metrics, 'bo-')  # 蓝色圆点实线，b——blue，o——circle marker
     plt.plot(epochs, val_metrics, 'ro--')  # 红色圆点虚线
-    plt.title('PNN Training and validation_' + metric)
+    plt.title('AFM Training and validation_' + metric)
     plt.xlabel('epochs')
     plt.ylabel(metric)
     plt.legend(['train_' + metric, 'val_' + metric])

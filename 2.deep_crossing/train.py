@@ -53,6 +53,7 @@ def train(epoch):
             # print('二元分类模型样本中标签全为1或者0时会报错，样本不均衡导致\n')
             pass
         loss.backward()
+        optimizer.step()
 
     torch.save(dc_model.state_dict(), 'models/dc.pkl')
     torch.save(dc_model.state_dict(), 'models/optimizer.pkl')

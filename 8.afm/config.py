@@ -17,3 +17,7 @@ hidden_units = [269, 128, 64, 32]
 
 dropout = 0.1
 output_dim = 1
+
+
+# AFM相关配置参数
+attention_vector = 8

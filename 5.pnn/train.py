@@ -63,7 +63,7 @@ def train(epoch):
 
 def eval(epoch):
     model = PNN(mode='out')
-    model.load_state_dict(torch.load('models/pnn.pkl'),strict=False)
+    model.load_state_dict(torch.load('models/5.pnn.pkl'),strict=False)
     val_loader = get_dataloader(mode='val')
     loss_function = nn.BCELoss()
     val_loss = []

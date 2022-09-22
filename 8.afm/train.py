@@ -15,7 +15,7 @@ from sklearn.metrics import auc, roc_auc_score, roc_curve
 from torch import nn
 from tqdm import tqdm
 from dataset import get_dataloader
-from nfm_model import NFM
+from afm_model import AFM
 from torch.optim import Adam
 import pandas as pd
 
@@ -34,7 +34,7 @@ history = pd.DataFrame(columns=['epoch', 'loss', metric_name, 'val_loss', ('val_
 
 
 def train(epoch):
-    model = NFM()
+    model = AFM()
     optimizer = Adam(model.parameters(),lr=0.001)
     loss_function = nn.BCELoss()
     loss_list = []
@@ -54,7 +54,7 @@ def train(epoch):
             pass
         loss.backward()
 
-    torch.save(model.state_dict(), 'models/nfm.pkl')
+    torch.save(model.state_dict(), 'models/afm.pkl')
     torch.save(model.state_dict(), 'models/optimizer.pkl')
     # print('epoch:{} loss:{:.4f}'.format(epoch, np.mean(loss_list)))
     history.loc[epoch, ['epoch', 'loss', metric_name]] = epoch, np.mean(loss_list), np.mean(
@@ -62,8 +62,8 @@ def train(epoch):
 
 
 def eval(epoch):
-    model = NFM()
-    model.load_state_dict(torch.load('models/7.nfm.pkl'),strict=False)
+    model = AFM()
+    model.load_state_dict(torch.load('models/afm.pkl'),strict=False)
     val_loader = get_dataloader(mode='val')
     loss_function = nn.BCELoss()
     val_loss = []

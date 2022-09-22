@@ -63,7 +63,7 @@ def train(epoch):
 
 def eval(epoch):
     model = DeepFM()
-    model.load_state_dict(torch.load('models/deep_fm.pkl'),strict=False)
+    model.load_state_dict(torch.load('models/6.deep_fm.pkl'),strict=False)
     val_loader = get_dataloader(mode='val')
     loss_function = nn.BCELoss()
     val_loss = []

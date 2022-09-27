@@ -179,7 +179,7 @@ class DinData(Dataset):
 
 
 def collate_fn(batch):
-    # print(batch)
+    # 按用户历史序列长短进行排序
     batch = sorted(batch, key=lambda x: len(x[2]), reverse=True)
     need_pad = []
     for i in batch:
@@ -206,7 +206,7 @@ def collate_fn(batch):
 
 
 def get_dataloader(data, mode='train'):
-    return DataLoader(DinData(data, mode), batch_size=128, shuffle=False, collate_fn=collate_fn)
+    return DataLoader(DinData(data, mode), batch_size=2, shuffle=False, collate_fn=collate_fn)
 
 
 if __name__ == '__main__':

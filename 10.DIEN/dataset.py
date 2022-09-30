@@ -9,6 +9,7 @@
 @Description : 用来处理数据
 """
 from random import sample
+import torch
 
 import numpy as np
 import pandas as pd
@@ -32,11 +33,13 @@ def get_movies_id(data_df):
     :return:
     """
     movies_hist = data_df['hist_movie_id'].values
+    movie_id = data_df['movie_id'].values
     all_movies = []
     for hist in movies_hist:
         hist_set = set([int(x) for x in hist.split(',') if x != '0'])
         all_movies.extend(list(hist_set))
-    return list(set(all_movies))
+    all_movies = list(set(all_movies).union(set(movie_id)))
+    return all_movies
 
 
 def get_neg_click(data_df, neg_num=10):
@@ -63,7 +66,7 @@ def get_neg_click(data_df, neg_num=10):
 X['neg_hist_movies_id'] = get_neg_click(X, neg_num=50)
 
 
-def get_feature_name(features):
+def get_feature_name(features=X):
     """
     为之后的embedding做准备
     :return:
@@ -74,7 +77,7 @@ def get_feature_name(features):
     sparse_fea_dict['user_id'] = features['user_id'].nunique()
     sparse_fea_dict['gender'] = features['gender'].nunique()
     movies_list = get_movies_id(features)
-    movie_num = pd.Series(movies_list).nunique()
+    movie_num = pd.Series(movies_list).nunique() + 1
     sparse_fea_dict['hist_movie_id'] = movie_num
     sparse_fea_dict['movie_id'] = movie_num
     sparse_fea_dict['movie_type_id'] = features['movie_type_id'].nunique()
@@ -109,9 +112,11 @@ def collate_fn(batch):
     batch = sorted(batch, key=lambda x: len(x[0][3]), reverse=True)
     need_pad = []
     for i in batch:
-        hist = []
-        need_pad.append([int(x) for x in i[0][3].split(',')])
-    need_pad = [torch.LongTensor(x) for x in need_pad]
+        if torch.is_tensor(i[0][3]):
+            need_pad.append(i[0][3])
+        else:
+            need_pad.append([int(x) for x in (i[0][3].split(','))])
+            need_pad = [torch.LongTensor(x) for x in need_pad]
     input_hist_pad = pad_sequence(tuple(need_pad), batch_first=True, padding_value=0)
     j = 0
     for i in batch:
@@ -125,11 +130,8 @@ def collate_fn(batch):
 
 
 def get_dataloader():
-    return DataLoader(DIENDataSet(), batch_size=2, shuffle=False, collate_fn=collate_fn)
-
+    return DataLoader(DIENDataSet(), batch_size=16, shuffle=False, collate_fn=collate_fn)
 
 if __name__ == '__main__':
-    loader = get_dataloader()
-    for idx,(input_, target, label) in enumerate(loader):
-        print(input_, target, label)
-        break
+
+    pass

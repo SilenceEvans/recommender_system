@@ -13,7 +13,7 @@ import torch.nn as nn
 from dataset import get_sparse_fea_num
 import torch.nn.functional as F
 
-from dcn import config
+import config
 
 
 class Cross(nn.Module):
